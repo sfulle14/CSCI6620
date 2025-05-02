@@ -1,0 +1,507 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="3/15/2023 10:00:35 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="PTG-SFULLLT"
+  DTS:CreatorName="PIONEER\sfuller"
+  DTS:DTSID="{DBE6318F-0202-45E6-8199-F4DFE945CCFD}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="14.0.3008.28"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="070_Images"
+  DTS:PackageType="5"
+  DTS:VersionBuild="8"
+  DTS:VersionGUID="{09163128-DDB1-44A6-84FE-3D1A8B3924DD}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[Conv]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{DEAD7810-C017-41FF-9C6B-6EBD527DCAD6}"
+      DTS:ObjectName="Conv">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=PTG-CONVERSION1\SQL2016;Initial Catalog=BMLakewood_Conv;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\01_CaseDocketInsertCivilTraffic"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{7b8249ac-71d7-481b-87e0-57a27b0746f2}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="01_CaseDocketInsertCivilTraffic"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{DEAD7810-C017-41FF-9C6B-6EBD527DCAD6}"
+          SQLTask:SqlStatementSource="/************************************************************************&#xA;* Project : Benchmark Lakewood County, OH&#xA;*  Date: 03/23/2022&#xA;*  Name: DEF 107515 - Civil &amp; Criminal Traffic&#xA;* Created : Nancy F&#xA;*************************************************************************&#xA;* Revision History&#xA;*Ver: Date:   ModBy:  Notes        &#xA;*------------------------------------------------------------------------&#xA;**001   03/23/2022  Nancy F  Created &#xA;      Civil_Dockets and Traffic_Criminal_Docket stored in SourceTableName column for reference&#xA;      ImageKey stored in OriginalERecordID column for reference&#xA;*************************************************************************/&#xA;;WITH cteCiv AS&#xA;(&#xA;SELECT cd.[Civil_Docket_Id]&#xA;      ,cd.[Date_Of_Entry]&#xA;      ,cd.[Description]&#xA;      ,cd.[User_Id]&#xA;      ,cd.[Civil_Case_Id]&#xA;      ,cd.[ImageKey]&#xA;  FROM [BMLakewood_Source].[dbo].[Civil_Dockets] cd&#xA;  JOIN [BMLakewood_Source].[dbo].[DVIndex] dvi WITH(NOLOCK)&#xA;  ON cd.ImageKey = dvi.ImageKey&#xA;)&#xA;,cteCT AS&#xA;(&#xA;SELECT tcd.[Traffic_Criminal_Docket_Id]&#xA;      ,tcd.[Date_Of_Entry]&#xA;      ,tcd.[Description]&#xA;      ,tcd.[User_Id]&#xA;      ,tcd.[Case_Number]&#xA;      ,tcd.[ImageKey]&#xA;  FROM [BMLakewood_Source].[dbo].[Traffic_Criminal_Dockets] tcd WITH(NOLOCK)&#xA;  JOIN [BMLakewood_Source].[dbo].[DVIndex] dvi WITH(NOLOCK)&#xA;  ON tcd.ImageKey = dvi.ImageKey&#xA;)&#xA;&#xA;INSERT INTO tblCaseDocket&#xA;    (CaseID&#xA;    ,DocketCodeID&#xA;    ,DocketDate&#xA;    ,DocketText&#xA;    ,DocketSequenceNumber&#xA;    ,ReferenceNumber&#xA;    ,AssignReferenceNumber&#xA;    ,WebSubmit&#xA;    ,HideFromWeb&#xA;    ,Highlight&#xA;    ,AutoDocketFieldID&#xA;    ,SourceTableName&#xA;    ,SourceTableID&#xA;    ,DocumentCount&#xA;    ,BatchMode&#xA;    ,VerifyByUserID&#xA;    ,VerifyDate&#xA;    ,ScanBatchID&#xA;    ,ScanBatchIndexByUserID&#xA;    ,ScanBatchIndexDate&#xA;    ,AdditionalScanBatchID&#xA;    ,ExpectedImageCount&#xA;    ,KeyedByUserID&#xA;    ,KeyedStatus&#xA;    ,CaseReOpen&#xA;    ,DisburseFunds&#xA;    ,DocketIcon&#xA;    ,DocumentAction&#xA;    ,DocumentActionDate&#xA;    ,ActionRequiredByUserID&#xA;    ,ActionTaken&#xA;    ,ActionCompleteDate&#xA;    ,ActionFinalized&#xA;    ,ActionFinalizedDate&#xA;    ,ActionFinalizedByUserID&#xA;    ,CCISSequenceNumber&#xA;    ,AssignedByUserID&#xA;    ,AssignedDate&#xA;    ,CreateByUserID&#xA;    ,CreateDate&#xA;    ,ModifyByUserID&#xA;    ,ModifyDate&#xA;    ,LockedByPartyID&#xA;    ,RegistryFlag&#xA;    ,FiledBy&#xA;    ,IsSealed&#xA;    ,RedactStatus&#xA;    ,RedactID&#xA;    ,DocketStatus&#xA;    ,GarnishmentFlag&#xA;    ,DisburseGarnishmentFunds&#xA;    ,HasOCR&#xA;    ,ICPEventID&#xA;    ,VORStatus&#xA;    ,OriginalERecordID)&#xA;SELECT&#xA; C.CaseID AS CaseID&#xA; ,(SELECT TOP 1 DocketCodeID FROM tblDocketCode WITH(NOLOCK) WHERE DocketCode = 'FREETYPE') AS DocketCodeID&#xA; ,cvd.Date_Of_Entry AS DocketDate&#xA; ,cvd.Description AS DocketText&#xA; ,0 AS DocketSequenceNumber&#xA; ,0 AS ReferenceNumber&#xA; ,0 AS AssignReferenceNumber&#xA; ,0 AS WebSubmit&#xA; ,0 AS HideFromWeb&#xA; ,0 AS Highlight&#xA; ,0 AS AutoDocketFieldID&#xA; ,'Civil_Dockets' AS SourceTableName&#xA; ,cvd.Civil_Docket_Id AS SourceTableID&#xA; ,1 AS DocumentCount&#xA; ,0 AS BatchMode&#xA; ,0 AS VerifyByUserID&#xA; ,NULL AS VerifyDate&#xA; ,0 AS ScanBatchID&#xA; ,0 AS ScanBatchIndexByUserID&#xA; ,NULL AS ScanBatchIndexDate&#xA; ,0 AS AdditionalScanBatchID&#xA; ,0 AS ExpectedImageCount&#xA; ,0 AS KeyedByUserID&#xA; ,'' AS KeyedStatus&#xA; ,0 AS CaseReOpen&#xA; ,0 AS DisburseFunds&#xA; ,3 AS DocketIcon&#xA; ,0 AS DocumentAction&#xA; ,NULL AS DocumentActionDate&#xA; ,0 AS ActionRequiredByUserID&#xA; ,0 AS ActionTaken&#xA; ,NULL AS ActionCompleteDate&#xA; ,0 AS ActionFinalized&#xA; ,NULL AS ActionFinalizedDate&#xA; ,0 AS ActionFinalizedByUserID&#xA; ,NULL AS CCISSequenceNumber&#xA; ,0 AS AssignedByUserID&#xA; ,NULL AS AssignedDate&#xA; ,p.PartyID AS CreateByUserID&#xA; ,cvd.Date_Of_Entry AS CreateDate&#xA; ,p.PartyID AS ModifyByUserID&#xA; ,cvd.Date_Of_Entry AS ModifyDate&#xA; ,0 AS LockedByPartyID&#xA; ,0 AS RegistryFlag&#xA; ,0 AS FiledBy&#xA; ,0 AS IsSealed&#xA; ,0 AS RedactStatus&#xA; ,0 AS RedactID&#xA; ,'' AS DocketStatus&#xA; ,0 AS GarnishmentFlag&#xA; ,0 AS DisburseGarnishmentFunds&#xA; ,0 AS HasOCR&#xA; ,0 AS ICPEventID&#xA; ,0 AS VORStatus&#xA; ,ImageKey AS OriginalERecordID&#xA;FROM cteCiv cvd WITH (NOLOCK)&#xA; INNER JOIN tblCase C WITH (NOLOCK) ON cvd.Civil_Case_Id  = c.CaseID&#xA; LEFT JOIN tblParty p WITH(NOLOCK)&#xA;  ON CAST(p.FamilyCode AS INT) = cvd.User_Id&#xA;  AND p.PrimaryPartyType = 'clk'&#xA;WHERE NOT EXISTS (SELECT 1 FROM tblCaseDocket cd WITH(NOLOCK) WHERE cvd.Civil_Docket_Id = cd.SourceTableID AND cd.SourceTableName = 'Civil_Dockets')&#xA;&#xA;UNION&#xA;&#xA;SELECT&#xA;         C.CaseID AS CaseID&#xA;        ,(SELECT TOP 1 DocketCodeID FROM tblDocketCode WITH(NOLOCK) WHERE DocketCode = 'FREETYPE') AS DocketCodeID&#xA;        ,tcd.Date_Of_Entry AS DocketDate&#xA;        ,tcd.Description AS DocketText&#xA;        ,0 AS DocketSequenceNumber&#xA;        ,0 AS ReferenceNumber&#xA;        ,0 AS AssignReferenceNumber&#xA;        ,0 AS WebSubmit&#xA;        ,0 AS HideFromWeb&#xA;        ,0 AS Highlight&#xA;        ,0 AS AutoDocketFieldID&#xA;        ,'Traffic_Criminal_Docket' AS SourceTableName&#xA;        ,tcd.Traffic_Criminal_Docket_Id AS SourceTableID&#xA;        ,1 AS DocumentCount&#xA;        ,0 AS BatchMode&#xA;        ,0 AS VerifyByUserID&#xA;        ,NULL AS VerifyDate&#xA;        ,0 AS ScanBatchID&#xA;        ,0 AS ScanBatchIndexByUserID&#xA;        ,NULL AS ScanBatchIndexDate&#xA;        ,0 AS AdditionalScanBatchID&#xA;        ,0 AS ExpectedImageCount&#xA;        ,0 AS KeyedByUserID&#xA;        ,'' AS KeyedStatus&#xA;        ,0 AS CaseReOpen&#xA;        ,0 AS DisburseFunds&#xA;        ,3 AS DocketIcon&#xA;        ,0 AS DocumentAction&#xA;        ,NULL AS DocumentActionDate&#xA;        ,0 AS ActionRequiredByUserID&#xA;        ,0 AS ActionTaken&#xA;        ,NULL AS ActionCompleteDate&#xA;        ,0 AS ActionFinalized&#xA;        ,NULL AS ActionFinalizedDate&#xA;        ,0 AS ActionFinalizedByUserID&#xA;        ,NULL AS CCISSequenceNumber&#xA;        ,0 AS AssignedByUserID&#xA;        ,NULL AS AssignedDate&#xA;        ,p.PartyID AS CreateByUserID&#xA;        ,tcd.Date_Of_Entry AS CreateDate&#xA;        ,p.PartyID AS ModifyByUserID&#xA;        ,tcd.Date_Of_Entry AS ModifyDate&#xA;        ,0 AS LockedByPartyID&#xA;        ,0 AS RegistryFlag&#xA;        ,0 AS FiledBy&#xA;        ,0 AS IsSealed&#xA;        ,0 AS RedactStatus&#xA;        ,0 AS RedactID&#xA;        ,'' AS DocketStatus&#xA;        ,0 AS GarnishmentFlag&#xA;        ,0 AS DisburseGarnishmentFunds&#xA;        ,0 AS HasOCR&#xA;        ,0 AS ICPEventID&#xA;        ,0 AS VORStatus&#xA;        ,ImageKey AS OriginalERecordID&#xA;FROM cteCT tcd WITH (NOLOCK)&#xA; INNER JOIN tblCase c WITH (NOLOCK) ON tcd.Case_Number  = c.CaseNumber&#xA; LEFT JOIN tblParty p WITH(NOLOCK)&#xA;  ON CAST(p.FamilyCode AS INT) = tcd.User_Id&#xA;  AND p.PrimaryPartyType = 'clk'&#xA;WHERE NOT EXISTS (SELECT 1 FROM tblCaseDocket cd WITH(NOLOCK) WHERE tcd.Traffic_Criminal_Docket_Id = cd.SourceTableID AND cd.SourceTableName = 'Traffic_Criminal_Docket')&#xA;-- 658714 rows affected; 00:00:42" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\02_DocumentInsertCivilTraffic"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{3c562e65-eb33-4588-a0a5-ce9356ee7b54}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="02_DocumentInsertCivilTraffic"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{DEAD7810-C017-41FF-9C6B-6EBD527DCAD6}"
+          SQLTask:SqlStatementSource="/************************************************************************&#xA;* Project : Benchmark Lakewood County, OH&#xA;*  Date: 03/23/2022&#xA;*  Name: DEF 107515&#xA;* Created : Nancy F&#xA;*************************************************************************&#xA;* Revision History&#xA;*Ver: Date:   ModBy:  Notes        &#xA;*------------------------------------------------------------------------&#xA;**001   03/23/2022  Nancy F  Created &#xA;      DEF107515CV stored in ImageType column for reference for Civil&#xA;      DEF107515CT stored in ImageType column for reference for Criminal Traffic&#xA;*************************************************************************/&#xA;&#xA;INSERT INTO [dbo].[tblDocument]&#xA; ([SourceTableName]&#xA; ,[SourceTableID]&#xA; ,[DocumentShare]&#xA; ,[DocumentPath]&#xA; ,[DocumentExtension]&#xA; ,[DocumentImage]&#xA; ,[DocumentSequence]&#xA; ,[PageSequence]&#xA; ,[OriginalDocumentShare]&#xA; ,[OriginalDocumentPath]&#xA; ,[OriginalDocumentExtension]&#xA; ,[OriginalDocumentImage]&#xA; ,[eRecordID]&#xA; ,[HidePage]&#xA; ,[DocumentDescription]&#xA; ,[ImageType]&#xA; ,[BatchMode]&#xA; ,[AppealID]&#xA; ,[QCDate]&#xA; ,[QCByUserID]&#xA; ,[VerifyDate]&#xA; ,[VerifyByUserID]&#xA; ,[RedactStatus]&#xA; ,[RedactID]&#xA; ,[Recognized]&#xA; ,[FileDate]&#xA; ,[ImageStamped]&#xA; ,[CreateByUserID]&#xA; ,[CreateDate]&#xA; ,[ModifyByUserID]&#xA; ,[ModifyDate]&#xA; ,[BadImage]&#xA; ,[FiledByUserID]&#xA; ,[CertificationStamped]&#xA; ,[Conformance]&#xA; ,[OCRed]&#xA; ,[PageCount]&#xA; ,[HiddenPages])&#xA;---- Civil&#xA;SELECT&#xA;  'tblCaseDocket' AS [SourceTableName]&#xA; ,(SELECT TOP 1 cd1.CaseDocketID FROM tblCaseDocket cd1 WITH(NOLOCK) WHERE cd1.SourceTableName = 'Civil_Dockets' AND cd1.SourceTableID = cvd.Civil_Docket_Id) AS [SourceTableID]&#xA; --,CD.CaseID&#xA; ,'\\BENCHMARK-FILE\' AS [DocumentShare]&#xA; --,'\\172.16.16.172\' AS [DocumentShare]&#x9;-- GBDI-821: Unable to View Converted Images in 4th Conversion Pass&#xA; ,'D\DocketImages\civil\' + SUBSTRING(i.FileName,0,CHARINDEX('.',i.FileName)) + '.pdf' AS [DocumentPath]&#xA; ,'pdf' AS [DocumentExtension]&#xA; ,NULL AS [DocumentImage]&#xA; --,ROW_NUMBER() OVER(PARTITION BY cd.CaseID ORDER BY cd.CaseDocketID ASC) AS [DocumentSequence]&#xA; ,1 AS [DocumentSequence]&#xA; ,1 AS [PageSequence]&#xA; ,NULL AS [OriginalDocumentShare]&#xA; ,NULL AS [OriginalDocumentPath]&#xA; ,NULL AS [OriginalDocumentExtension]&#xA; ,NULL AS [OriginalDocumentImage]&#xA; ,0 AS [eRecordID]&#xA; ,0 AS [HidePage]&#xA; ,LEFT(LTRIM(RTRIM(cvd.Description)),150) AS [DocumentDescription]&#xA; ,'DEF107515CV' AS [ImageType]&#xA; ,0 AS [BatchMode]&#xA; ,0 AS [AppealID]&#xA; ,NULL AS [QCDate]&#xA; ,0 AS [QCByUserID]&#xA; ,NULL AS [VerifyDate]&#xA; ,0 AS [VerifyByUserID]&#xA; ,0 AS [RedactStatus]&#xA; --,2 AS [RedactStatus]&#x9;-- GBDI-821: Unable to View Converted Images in 4th Conversion Pass&#xA; ,0 AS [RedactID]&#xA; ,0 AS [Recognized]&#xA; ,NULL AS [FileDate]&#xA; ,0 AS [ImageStamped]&#xA; ,p.PartyID AS [CreateByUserID]&#xA; ,cvd.Date_Of_Entry AS [CreateDate]&#xA; ,p.PartyID AS [ModifyByUserID]&#xA; ,cvd.Date_Of_Entry AS [ModifyDate]&#xA; ,0 AS [BadImage]&#xA; ,0 AS [FiledByUserID]&#xA; ,0 AS [CertificationStamped]&#xA; ,NULL AS [Conformance]&#xA; ,NULL AS [OCRed]&#xA; ,NULL AS [PageCount]&#xA; ,NULL AS [HiddenPages]&#xA;FROM [BMLakewood_Source].[dbo].[DVIndex] i WITH(NOLOCK)&#xA;JOIN [BMLakewood_Source].[dbo].[Civil_Dockets] cvd WITH(NOLOCK)&#xA; ON i.ImageKey = cvd.ImageKey&#xA;JOIN tblCaseDocket cd  WITH(NOLOCK)&#xA; ON cvd.Civil_Case_Id = cd.CaseID&#xA; AND cvd.Description = cd.DocketText&#xA; AND cvd.Date_Of_Entry = cd.DocketDate&#xA;LEFT JOIN tblParty p WITH(NOLOCK)&#xA; ON p.FamilyCode = cvd.User_Id&#xA; AND p.PrimaryPartyType = 'clk'&#xA;WHERE NOT EXISTS (SELECT 1 FROM tblDocument d1 WITH(NOLOCK) WHERE d1.SourceTableName = 'tblCaseDocket'&#xA; AND d1.SourceTableID = (SELECT TOP 1 cd.CaseDocketID FROM tblCaseDocket cd WITH(NOLOCK) WHERE cd.SourceTableName = 'Civil_Dockets' AND cd.SourceTableID = cvd.Civil_Docket_Id))&#xA;--WHERE Civil_Case_Id = 49283&#xA;&#xA;UNION&#xA;&#xA;-- Criminal Traffic&#xA;SELECT&#xA;  'tblCaseDocket' AS [SourceTableName]&#xA; ,(SELECT TOP 1 cd1.CaseDocketID FROM tblCaseDocket cd1 WITH(NOLOCK) WHERE cd1.SourceTableName = 'Traffic_Criminal_Docket' AND cd1.SourceTableID = ctd.Traffic_Criminal_Docket_Id) AS [SourceTableID]&#xA; --,cd.CaseID&#xA; ,'\\BENCHMARK-FILE\' AS [DocumentShare]&#xA; --,'\\172.16.16.172\' AS [DocumentShare]&#x9;-- GBDI-821: Unable to View Converted Images in 4th Conversion Pass&#xA; ,'D\DocketImages\TRCR\' + SUBSTRING(i.FileName,0,CHARINDEX('.',i.FileName)) + '.pdf' AS [DocumentPath]&#xA; ,'pdf' AS [DocumentExtension]&#xA; ,NULL AS [DocumentImage]&#xA; ,1 AS [DocumentSequence]&#xA; ,1 AS [PageSequence]&#xA; ,NULL AS [OriginalDocumentShare]&#xA; ,NULL AS [OriginalDocumentPath]&#xA; ,NULL AS [OriginalDocumentExtension]&#xA; ,NULL AS [OriginalDocumentImage]&#xA; ,0 AS [eRecordID]&#xA; ,0 AS [HidePage]&#xA; ,LEFT(LTRIM(RTRIM(ctd.Description)),150) AS [DocumentDescription]&#xA; ,'DEF107515CT' AS [ImageType]&#xA; ,0 AS [BatchMode]&#xA; ,0 AS [AppealID]&#xA; ,NULL AS [QCDate]&#xA; ,0 AS [QCByUserID]&#xA; ,NULL AS [VerifyDate]&#xA; ,0 AS [VerifyByUserID]&#xA; ,0 AS [RedactStatus]&#xA; --,2 AS [RedactStatus]&#x9;&#x9;-- GBDI-821: Unable to View Converted Images in 4th Conversion Pass&#xA; ,0 AS [RedactID]&#xA; ,0 AS [Recognized]&#xA; ,NULL AS [FileDate]&#xA; ,0 AS [ImageStamped]&#xA; ,p.PartyID AS [CreateByUserID]&#xA; ,ctd.Date_Of_Entry AS [CreateDate]&#xA; ,p.PartyID AS [ModifyByUserID]&#xA; ,ctd.Date_Of_Entry AS [ModifyDate]&#xA; ,0 AS [BadImage]&#xA; ,0 AS [FiledByUserID]&#xA; ,0 AS [CertificationStamped]&#xA; ,NULL AS [Conformance]&#xA; ,NULL AS [OCRed]&#xA; ,NULL AS [PageCount]&#xA; ,NULL AS [HiddenPages]&#xA;FROM [BMLakewood_Source].[dbo].[DVIndex] i WITH(NOLOCK)&#xA;JOIN [BMLakewood_Source].[dbo].[Traffic_Criminal_Dockets] ctd WITH(NOLOCK)&#xA; ON i.ImageKey = ctd.ImageKey&#xA;JOIN tblCaseDocket cd  WITH(NOLOCK)&#xA; ON ctd.Case_Number = (SELECT TOP 1 CaseNumber FROM tblCase c WITH(NOLOCK) WHERE c.CaseID = cd.CaseID)&#xA; AND ctd.Description = cd.DocketText&#xA; AND ctd.Date_Of_Entry = cd.DocketDate&#xA;LEFT JOIN tblParty p WITH(NOLOCK)&#xA; ON p.FamilyCode = ctd.User_Id&#xA; AND p.PrimaryPartyType = 'clk'&#xA;WHERE NOT EXISTS (SELECT 1 FROM tblDocument d1 WITH(NOLOCK) WHERE d1.SourceTableName = 'tblCaseDocket'&#xA; AND d1.SourceTableID = (SELECT TOP 1 cd1.CaseDocketID FROM tblCaseDocket cd1 WITH(NOLOCK) WHERE cd1.SourceTableName = 'Traffic_Criminal_Docket' AND cd1.SourceTableID = ctd.Traffic_Criminal_Docket_Id))&#xA;&#xA;--(658714 rows affected); 00:03:00&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\03_InsertREVIEWCIVIL_TRAFFICTaskType"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{597fc066-dc47-4f0d-b30d-ad1d1465a28e}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="03_InsertREVIEWCIVIL_TRAFFICTaskType"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{DEAD7810-C017-41FF-9C6B-6EBD527DCAD6}"
+          SQLTask:SqlStatementSource="/************************************************************************&#xA;*&#x9;Project&#x9;: Brevard County Benchmark&#xA;*&#x9;&#x9;Date: 04/08/2022&#xA;*&#x9;&#x9;Name: DEF 107515 - Insert REVIEW CIVIL/TRAFFIC TaskType&#xA;*&#x9;Created&#x9;: Nancy F&#xA;*************************************************************************&#xA;* Revision History&#xA;*Ver:&#x9;Date:&#x9;&#x9;ModBy:&#x9;&#x9;Notes&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#xA;*------------------------------------------------------------------------&#xA;**001&#x9;04/08/2022&#x9;Nancy F&#x9;&#x9;Created&#xA;*&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#xA;*&#xA;*************************************************************************/&#x9;&#xA;&#xA;INSERT INTO [dbo].[tblTaskType]&#xA;    ([TaskTypeCode]&#xA;    ,[TaskTypeDescription]&#xA;    ,[BaseDate]&#xA;    ,[EndOfMonth]&#xA;    ,[DueDateModifier_Years]&#xA;    ,[DueDateModifier_Months]&#xA;    ,[DueDateModifier_Days]&#xA;    ,[RecurrenceType]&#xA;    ,[DocketCodeID_Complete]&#xA;    ,[DocketCodeID_Waived]&#xA;    ,[CostAmount]&#xA;    ,[StartEffectiveDate]&#xA;    ,[EndEffectiveDate]&#xA;    ,[EstimatedDurationTime]&#xA;    ,[CreateByUserID]&#xA;    ,[CreateDate]&#xA;    ,[ModifyByUserID]&#xA;    ,[ModifyDate]&#xA;    ,[StartDate]&#xA;    ,[ExcludeHolidays]&#xA;    ,[ExcludeWeekends])&#xA;SELECT&#xA;     'REVIEW' AS [TaskTypeCode]&#xA;    ,'REVIEW CIVIL/TRAFFIC CASE IMAGES' AS [TaskTypeDescription]&#xA;    ,NULL AS [BaseDate]&#xA;    ,NULL AS [EndOfMonth]&#xA;    ,NULL AS [DueDateModifier_Years]&#xA;    ,NULL AS [DueDateModifier_Months]&#xA;    ,NULL AS [DueDateModifier_Days]&#xA;    ,NULL AS [RecurrenceType]&#xA;    ,NULL AS [DocketCodeID_Complete]&#xA;    ,NULL AS [DocketCodeID_Waived]&#xA;    ,NULL AS [CostAmount]&#xA;    ,NULL AS [StartEffectiveDate]&#xA;    ,NULL AS [EndEffectiveDate]&#xA;    ,NULL AS [EstimatedDurationTime]&#xA;    ,2 AS [CreateByUserID]&#xA;    ,GETDATE() AS [CreateDate]&#xA;    ,2 AS [ModifyByUserID]&#xA;    ,GETDATE() AS [ModifyDate]&#xA;    ,NULL AS [StartDate]&#xA;    ,NULL AS [ExcludeHolidays]&#xA;    ,NULL AS [ExcludeWeekends]&#xA;WHERE NOT EXISTS (SELECT 1 FROM tblTaskType WITH(NOLOCK) WHERE [TaskTypeCode] = 'REVIEW' AND [TaskTypeDescription] = 'REVIEW CIVIL/TRAFFIC CASE IMAGES')&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\04_InsertREVIEWCIVIL_TRAFFIC_CaseTask"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:Disabled="True"
+      DTS:DTSID="{ce3275bc-16c9-40eb-8089-c97566e4c2dd}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="04_InsertREVIEWCIVIL_TRAFFIC_CaseTask"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{DEAD7810-C017-41FF-9C6B-6EBD527DCAD6}"
+          SQLTask:SqlStatementSource="/************************************************************************&#xA;* Project : Brevard County Benchmark&#xA;*  Date: 04/08/2022&#xA;*  Name: DEF 107515 - Insert REVIEW CIVIL/TRAFFIC TaskType&#xA;* Created : Nancy F&#xA;*************************************************************************&#xA;* Revision History&#xA;*Ver: Date:  ModBy:  Notes        &#xA;*------------------------------------------------------------------------&#xA;**001 04/08/2022 Nancy F  Created&#xA;*        &#xA;*&#xA;*************************************************************************/&#xA;&#xA;INSERT INTO [dbo].[tblCaseTask]&#xA; ([CaseID]&#xA; ,[SourceTableName]&#xA; ,[SourceTableID]&#xA; ,[TaskTypeID]&#xA; ,[TaskType]&#xA; ,[TaskDescription]&#xA; ,[StartDate]&#xA; ,[DueDate]&#xA; ,[AssignedToPartyID]&#xA; ,[CaseDocketID]&#xA; ,[Complete]&#xA; ,[Waived]&#xA; ,[CompleteDate]&#xA; ,[Amount]&#xA; ,[CreateByUserID]&#xA; ,[CreateDate]&#xA; ,[ModifyByUserID]&#xA; ,[ModifyDate]&#xA; ,[CompleteByUserID])&#xA;SELECT&#xA; [CaseID] = c.CaseID&#xA; ,'tblCaseDocket' AS [SourceTableName]&#xA; ,cd.CaseDocketID AS [SourceTableID]&#xA; ,(SELECT TOP 1 TaskTypeID FROM tblTaskType WITH(NOLOCK) WHERE TaskTypeCode = 'REVIEW' AND TaskTypeDescription = 'REVIEW CIVIL/TRAFFIC CASE IMAGES') AS [TaskTypeID]&#xA; ,'REVIEW' AS [TaskType]&#xA; ,'REVIEW CIVIL/TRAFFIC CASE IMAGES' AS [TaskDescription]&#xA; ,NULL AS [StartDate]&#xA; ,NULL AS [DueDate]&#xA; ,NULL AS [AssignedToPartyID]&#xA; ,cd.CaseDocketID AS [CaseDocketID]&#xA; ,0 AS [Complete]&#xA; ,NULL AS [Waived]&#xA; ,NULL AS [CompleteDate]&#xA; ,NULL AS [Amount]&#xA; ,2 AS [CreateByUserID]&#xA; ,GETDATE() AS [CreateDate]&#xA; ,2 AS [ModifyByUserID]&#xA; ,GETDATE() AS [ModifyDate]&#xA; ,NULL AS [CompleteByUserID]&#xA;FROM tblCase c WITH(NOLOCK)&#xA;JOIN tblCaseDocket cd WITH(NOLOCK)&#xA; ON c.CaseID = cd.CaseID&#xA;&#xA;WHERE cd.SourceTableName IN ('Civil_Dockets', 'Traffic_Criminal_Docket')" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\05_CaseDocketInsertFB"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{e3584ea5-2407-4bf7-81a2-b5dd04c61b4c}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="05_CaseDocketInsertFB"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{DEAD7810-C017-41FF-9C6B-6EBD527DCAD6}"
+          SQLTask:SqlStatementSource="/************************************************************************&#xA;* Project : Benchmark Lakewood County, OH&#xA;*  Date: 03/23/2022&#xA;*  Name: DEF 107515 - Filebound&#xA;* Created : Nancy F&#xA;*************************************************************************&#xA;* Revision History&#xA;*Ver: Date:   ModBy:  Notes        &#xA;*------------------------------------------------------------------------&#xA;**001   03/23/2022  Nancy F  Created &#xA;      DOCUMENTS stored in SourceTableName column for reference&#xA;*************************************************************************/&#xA;;WITH cte AS&#xA;(&#xA;SELECT&#xA; DocumentID&#xA; ,FileId&#xA; ,DateCreated&#xA; ,DividerName&#xA; ,Description&#xA;&#xA;FROM [BMLakewood_Filebound_Source].[dbo].[Documents]&#xA;--WHERE FileId = 18265&#xA;)&#xA;&#xA;INSERT INTO tblCaseDocket&#xA;    (CaseID&#xA;    ,DocketCodeID&#xA;    ,DocketDate&#xA;    ,DocketText&#xA;    ,DocketSequenceNumber&#xA;    ,ReferenceNumber&#xA;    ,AssignReferenceNumber&#xA;    ,WebSubmit&#xA;    ,HideFromWeb&#xA;    ,Highlight&#xA;    ,AutoDocketFieldID&#xA;    ,SourceTableName&#xA;    ,SourceTableID&#xA;    ,DocumentCount&#xA;    ,BatchMode&#xA;    ,VerifyByUserID&#xA;    ,VerifyDate&#xA;    ,ScanBatchID&#xA;    ,ScanBatchIndexByUserID&#xA;    ,ScanBatchIndexDate&#xA;    ,AdditionalScanBatchID&#xA;    ,ExpectedImageCount&#xA;    ,KeyedByUserID&#xA;    ,KeyedStatus&#xA;    ,CaseReOpen&#xA;    ,DisburseFunds&#xA;    ,DocketIcon&#xA;    ,DocumentAction&#xA;    ,DocumentActionDate&#xA;    ,ActionRequiredByUserID&#xA;    ,ActionTaken&#xA;    ,ActionCompleteDate&#xA;    ,ActionFinalized&#xA;    ,ActionFinalizedDate&#xA;    ,ActionFinalizedByUserID&#xA;    ,CCISSequenceNumber&#xA;    ,AssignedByUserID&#xA;    ,AssignedDate&#xA;    ,CreateByUserID&#xA;    ,CreateDate&#xA;    ,ModifyByUserID&#xA;    ,ModifyDate&#xA;    ,LockedByPartyID&#xA;    ,RegistryFlag&#xA;    ,FiledBy&#xA;    ,IsSealed&#xA;    ,RedactStatus&#xA;    ,RedactID&#xA;    ,DocketStatus&#xA;    ,GarnishmentFlag&#xA;    ,DisburseGarnishmentFunds&#xA;    ,HasOCR&#xA;    ,ICPEventID&#xA;    ,VORStatus&#xA;    ,OriginalERecordID)&#xA;  SELECT&#xA; C.CaseID AS CaseID&#xA;  ----,Field1&#xA; ,ISNULL(DC.DocketCodeID,8) AS DocketCodeID&#xA; ,d.DateCreated AS DocketDate&#xA; ,CASE&#xA;  WHEN ISNULL(d.DividerName,'') = ''&#xA;  THEN &#xA;   CASE&#xA;    WHEN ISNULL(d.Description,'') = ''&#xA;    THEN 'UNKNOWN DESCRIPTION'&#xA;    ELSE d.Description&#xA;   END&#xA;  ELSE d.DividerName&#xA; END AS DocketText&#xA; ,0 AS DocketSequenceNumber&#xA; ,0 AS ReferenceNumber&#xA; ,0 AS AssignReferenceNumber&#xA; ,0 AS WebSubmit&#xA; ,0 AS HideFromWeb&#xA; ,0 AS Highlight&#xA; ,0 AS AutoDocketFieldID&#xA; ,'DOCUMENTS' AS SourceTableName&#xA; ,d.DocumentID AS SourceTableID&#xA; ,0 AS DocumentCount&#xA; ,0 AS BatchMode&#xA; ,0 AS VerifyByUserID&#xA; ,NULL AS VerifyDate&#xA; ,0 AS ScanBatchID&#xA; ,0 AS ScanBatchIndexByUserID&#xA; ,NULL AS ScanBatchIndexDate&#xA; ,0 AS AdditionalScanBatchID&#xA; ,0 AS ExpectedImageCount&#xA; ,0 AS KeyedByUserID&#xA; ,'' AS KeyedStatus&#xA; ,0 AS CaseReOpen&#xA; ,0 AS DisburseFunds&#xA; ,3 AS DocketIcon&#xA; ,0 AS DocumentAction&#xA; ,NULL AS DocumentActionDate&#xA; ,0 AS ActionRequiredByUserID&#xA; ,0 AS ActionTaken&#xA; ,NULL AS ActionCompleteDate&#xA; ,0 AS ActionFinalized&#xA; ,NULL AS ActionFinalizedDate&#xA; ,0 AS ActionFinalizedByUserID&#xA; ,NULL AS CCISSequenceNumber&#xA; ,0 AS AssignedByUserID&#xA; ,NULL AS AssignedDate&#xA; ,ISNULL(p.PartyID,2) AS CreateByUserID&#xA; ,f.DateStarted AS CreateDate&#xA; ,ISNULL(p.PartyID,2) AS ModifyByUserID&#xA; ,f.DateChanged AS ModifyDate&#xA; ,0 AS LockedByPartyID&#xA; ,0 AS RegistryFlag&#xA; ,0 AS FiledBy&#xA; ,0 AS IsSealed&#xA; ,0 AS RedactStatus&#xA; ,0 AS RedactID&#xA; ,'' AS DocketStatus&#xA; ,0 AS GarnishmentFlag&#xA; ,0 AS DisburseGarnishmentFunds&#xA; ,0 AS HasOCR&#xA; ,0 AS ICPEventID&#xA; ,0 AS VORStatus&#xA; ,0 AS OriginalERecordID&#xA;FROM BMLakewood_Filebound_Source.dbo.Files F WITH (NOLOCK)&#xA; LEFT JOIN tblCase C WITH (NOLOCK) ON F.Field1 = C.CaseNumber&#xA; INNER JOIN cte d ON F.FileID = D.FileID &#xA; LEFT JOIN tblDocketCode DC WITH (NOLOCK) ON DC.DocketCode = (SELECT TOP 1 D1.DividerName FROM BMLakewood_Filebound_Source.dbo.Documents D1 WITH (NOLOCK) WHERE d1.DocumentID = D.DocumentID)&#xA; LEFT JOIN tblParty p WITH(NOLOCK)&#xA;  ON CAST(p.FamilyCode AS INT) = f.ChangedBy&#xA;  AND p.PrimaryPartyType = 'clk'&#xA;WHERE NOT EXISTS (SELECT 1 FROM tblCaseDocket cd WITH(NOLOCK) WHERE d.DocumentID = cd.SourceTableID AND cd.SourceTableName = 'DOCUMENTS')&#xA; AND ISNULL(CaseID,0) &lt;&gt; 0&#xA; AND ISNULL(f.Status,0) = 1" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\06_DocumentInsertFB"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{4c0dab2b-4183-4f35-9a30-968a3e95641b}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="06_DocumentInsertFB"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{DEAD7810-C017-41FF-9C6B-6EBD527DCAD6}"
+          SQLTask:SqlStatementSource="/************************************************************************&#xA;* Project : Benchmark Lakewood County, OH&#xA;*  Date: 03/23/2022&#xA;*  Name: DEF 107515 - Filebound&#xA;* Created : Nancy F&#xA;*************************************************************************&#xA;* Revision History&#xA;*Ver: Date:   ModBy:  Notes        &#xA;*------------------------------------------------------------------------&#xA;**001   03/23/2022  Nancy F  Created &#xA;      DEF107515_FB stored in ImageType column for reference&#xA;      DocumentId stored in OriginalDocumentShare column for reference&#xA;      FileID stored in OriginalDocumentPath column for reference&#xA;*************************************************************************/&#xA;;WITH cte AS&#xA;(&#xA;SELECT&#xA;DocumentID,&#xA; CASE &#xA;  WHEN LEN(DocumentID) = 1&#xA;  THEN '0000' + CAST(DocumentID AS VARCHAR) + '000'&#xA;  WHEN LEN(DocumentID) = 2&#xA;  THEN '000' + CAST(DocumentID AS VARCHAR) + '000'&#xA;  WHEN LEN(DocumentID) = 5&#xA;  THEN '000' + LEFT(CAST(DocumentID AS VARCHAR),2) + '000'&#xA;  WHEN LEN(DocumentID) = 6&#xA;  THEN '00' + LEFT(CAST(DocumentID AS VARCHAR),3) + '000'&#xA;  WHEN LEN(DocumentID) = 7&#xA;  THEN '0' + LEFT(CAST(DocumentID AS VARCHAR),4) + '000'&#xA;  ELSE LEFT(CAST(DocumentID AS VARCHAR),4)+'000'&#xA; END AS Folder&#xA;FROM [BMLakewood_Filebound_Source].[dbo].[Documents]&#xA; --where FILEID = 59155&#xA;)&#xA;&#xA;INSERT INTO [dbo].[tblDocument]&#xA; ([SourceTableName]&#xA; ,[SourceTableID]&#xA; ,[DocumentShare]&#xA; ,[DocumentPath]&#xA; ,[DocumentExtension]&#xA; ,[DocumentImage]&#xA; ,[DocumentSequence]&#xA; ,[PageSequence]&#xA; ,[OriginalDocumentShare]&#xA; ,[OriginalDocumentPath]&#xA; ,[OriginalDocumentExtension]&#xA; ,[OriginalDocumentImage]&#xA; ,[eRecordID]&#xA; ,[HidePage]&#xA; ,[DocumentDescription]&#xA; ,[ImageType]&#xA; ,[BatchMode]&#xA; ,[AppealID]&#xA; ,[QCDate]&#xA; ,[QCByUserID]&#xA; ,[VerifyDate]&#xA; ,[VerifyByUserID]&#xA; ,[RedactStatus]&#xA; ,[RedactID]&#xA; ,[Recognized]&#xA; ,[FileDate]&#xA; ,[ImageStamped]&#xA; ,[CreateByUserID]&#xA; ,[CreateDate]&#xA; ,[ModifyByUserID]&#xA; ,[ModifyDate]&#xA; ,[BadImage]&#xA; ,[FiledByUserID]&#xA; ,[CertificationStamped]&#xA; ,[Conformance]&#xA; ,[OCRed]&#xA; ,[PageCount]&#xA; ,[HiddenPages])&#xA;SELECT&#xA;  'tblCaseDocket' AS [SourceTableName]&#xA; ,(SELECT TOP 1 CaseDocketID FROM tblCaseDocket cd WITH(NOLOCK) WHERE cd.SourceTableID = d.DocumentID) AS [SourceTableID]&#xA; ,'\\BENCHMARK-FILE\' AS [DocumentShare]&#xA; --,'\\172.16.16.172\' AS [DocumentShare]&#x9;--GBDI-821:Unable to View Converted Images in 4th Conversion Pass&#xA; ,'D\fb_docs\' + cte.Folder + '\' + CAST(d.DocumentID AS VARCHAR) + '.' + d.Extension AS [DocumentPath]&#xA; --,'\\172.16.16.172\D\fb_docs\' + cte.Folder + '\' + CAST(d.DocumentID AS VARCHAR) + '.' + d.Extension TestPath&#xA; ,d.Extension AS [DocumentExtension]&#xA; ,NULL AS [DocumentImage]&#xA; ,1 AS [DocumentSequence]&#xA; ,1 AS PageSequence&#xA; ,d.DocumentID AS [OriginalDocumentShare]&#xA; ,d.FileID AS [OriginalDocumentPath]&#xA; ,NULL AS [OriginalDocumentExtension]&#xA; ,NULL AS [OriginalDocumentImage]&#xA; ,0 AS [eRecordID]&#xA; ,0 AS [HidePage]&#xA; ,LEFT(LTRIM(RTRIM(d.Description)),150) AS [DocumentDescription]&#xA; ,'DEF107515_FB' AS [ImageType]&#xA; ,0 AS [BatchMode]&#xA; ,0 AS [AppealID]&#xA; ,NULL AS [QCDate]&#xA; ,0 AS [QCByUserID]&#xA; ,NULL AS [VerifyDate]&#xA; ,0 AS [VerifyByUserID]&#xA; ,0 AS [RedactStatus]&#xA; --,2 AS [RedactStatus]&#x9;&#x9;--GBDI-821:Unable to View Converted Images in 4th Conversion Pass&#xA; ,0 AS [RedactID]&#xA; ,0 AS [Recognized]&#xA; ,NULL AS [FileDate]&#xA; ,0 AS [ImageStamped]&#xA; ,p.PartyID AS [CreateByUserID]&#xA; ,d.DateCreated AS [CreateDate]&#xA; ,p.PartyID AS [ModifyByUserID]&#xA; ,d.DateCreated AS [ModifyDate]&#xA; ,0 AS [BadImage]&#xA; ,0 AS [FiledByUserID]&#xA; ,0 AS [CertificationStamped]&#xA; ,NULL AS [Conformance]&#xA; ,NULL AS [OCRed]&#xA; ,d.Pages AS [PageCount]&#xA; ,NULL AS [HiddenPages]&#xA;FROM [BMLakewood_Filebound_Source].[dbo].[Files] f WITH(NOLOCK)&#xA;JOIN tblCase c WITH(NOLOCK)&#xA; ON f.Field1 = c.CaseNumber&#xA;JOIN [BMLakewood_Filebound_Source].[dbo].[Documents] d WITH(NOLOCK)&#xA; ON f.FileID = d.FileID&#xA;JOIN cte&#xA; ON d.DocumentID = cte.DocumentID&#xA;LEFT JOIN tblParty p WITH(NOLOCK)&#xA; ON CAST(p.FamilyCode AS INT) = d.UserCreated&#xA; AND p.PrimaryPartyType = 'clk'&#xA;WHERE ISNULL(f.Status,0) = 1&#xA; AND NOT EXISTS (SELECT 1 FROM tblDocument d1 WITH(NOLOCK) WHERE d1.OriginalDocumentShare =  CONVERT(VARCHAR,d.DocumentID))&#xA;--AND f.FileID = 11048&#xA;--1,415,139 rows affected; 00:01:08&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\07_InsertREVIEW_FileboundTaskType"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{dcd8d1e4-0851-4818-a9d7-0f65a9a6847a}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="07_InsertREVIEW_FileboundTaskType"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{DEAD7810-C017-41FF-9C6B-6EBD527DCAD6}"
+          SQLTask:SqlStatementSource="/************************************************************************&#xA;* Project : Brevard County Benchmark&#xA;*  Date: 04/08/2022&#xA;*  Name: DEF 107515 - Insert REVIEW FILEBOUND TaskType&#xA;* Created : Nancy F&#xA;*************************************************************************&#xA;* Revision History&#xA;*Ver: Date:  ModBy:  Notes        &#xA;*------------------------------------------------------------------------&#xA;**001 04/08/2022 Nancy F  Created&#xA;*        &#xA;*&#xA;*************************************************************************/ &#xA;&#xA;INSERT INTO [dbo].[tblTaskType]&#xA;    ([TaskTypeCode]&#xA;    ,[TaskTypeDescription]&#xA;    ,[BaseDate]&#xA;    ,[EndOfMonth]&#xA;    ,[DueDateModifier_Years]&#xA;    ,[DueDateModifier_Months]&#xA;    ,[DueDateModifier_Days]&#xA;    ,[RecurrenceType]&#xA;    ,[DocketCodeID_Complete]&#xA;    ,[DocketCodeID_Waived]&#xA;    ,[CostAmount]&#xA;    ,[StartEffectiveDate]&#xA;    ,[EndEffectiveDate]&#xA;    ,[EstimatedDurationTime]&#xA;    ,[CreateByUserID]&#xA;    ,[CreateDate]&#xA;    ,[ModifyByUserID]&#xA;    ,[ModifyDate]&#xA;    ,[StartDate]&#xA;    ,[ExcludeHolidays]&#xA;    ,[ExcludeWeekends])&#xA;SELECT&#xA;     'REVIEWFB' AS [TaskTypeCode]&#xA;    ,'REVIEW FILEBOUND CASE IMAGES' AS [TaskTypeDescription]&#xA;    ,NULL AS [BaseDate]&#xA;    ,NULL AS [EndOfMonth]&#xA;    ,NULL AS [DueDateModifier_Years]&#xA;    ,NULL AS [DueDateModifier_Months]&#xA;    ,NULL AS [DueDateModifier_Days]&#xA;    ,NULL AS [RecurrenceType]&#xA;    ,NULL AS [DocketCodeID_Complete]&#xA;    ,NULL AS [DocketCodeID_Waived]&#xA;    ,NULL AS [CostAmount]&#xA;    ,NULL AS [StartEffectiveDate]&#xA;    ,NULL AS [EndEffectiveDate]&#xA;    ,NULL AS [EstimatedDurationTime]&#xA;    ,2 AS [CreateByUserID]&#xA;    ,GETDATE() AS [CreateDate]&#xA;    ,2 AS [ModifyByUserID]&#xA;    ,GETDATE() AS [ModifyDate]&#xA;    ,NULL AS [StartDate]&#xA;    ,NULL AS [ExcludeHolidays]&#xA;    ,NULL AS [ExcludeWeekends]&#xA;WHERE NOT EXISTS (SELECT 1 FROM tblTaskType WITH(NOLOCK) WHERE [TaskTypeCode] = 'REVIEW' AND [TaskTypeDescription] = 'REVIEW FILEBOUND CASE IMAGES')" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\08_InsertREVIEW_Filebound_CaseTask"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:Disabled="True"
+      DTS:DTSID="{f0360f91-9bc2-4348-a2f1-f06b25ab44e7}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="08_InsertREVIEW_Filebound_CaseTask"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{DEAD7810-C017-41FF-9C6B-6EBD527DCAD6}"
+          SQLTask:SqlStatementSource="/************************************************************************&#xA;* Project : Lakewood County Benchmark&#xA;*  Date: 04/08/2022&#xA;*  Name: DEF 107515 - Insert REVIEW FILEBOUND TaskType&#xA;* Created : Nancy F&#xA;*************************************************************************&#xA;* Revision History&#xA;*Ver: Date:  ModBy:  Notes        &#xA;*------------------------------------------------------------------------&#xA;**001 04/08/2022 Nancy F  Created&#xA;*        &#xA;*************************************************************************/&#xA;&#xA;INSERT INTO [dbo].[tblCaseTask]&#xA; ([CaseID]&#xA; ,[SourceTableName]&#xA; ,[SourceTableID]&#xA; ,[TaskTypeID]&#xA; ,[TaskType]&#xA; ,[TaskDescription]&#xA; ,[StartDate]&#xA; ,[DueDate]&#xA; ,[AssignedToPartyID]&#xA; ,[CaseDocketID]&#xA; ,[Complete]&#xA; ,[Waived]&#xA; ,[CompleteDate]&#xA; ,[Amount]&#xA; ,[CreateByUserID]&#xA; ,[CreateDate]&#xA; ,[ModifyByUserID]&#xA; ,[ModifyDate]&#xA; ,[CompleteByUserID])&#xA;SELECT&#xA; [CaseID] = c.CaseID&#xA; ,'tblCaseDocket' AS [SourceTableName]&#xA; ,cd.CaseDocketID AS [SourceTableID]&#xA; ,(SELECT TOP 1 TaskTypeID FROM tblTaskType WITH(NOLOCK) WHERE TaskTypeCode = 'REVIEWFB' AND TaskTypeDescription = 'REVIEW FILEBOUND CASE IMAGES') AS [TaskTypeID]&#xA; ,'REVIEWFB' AS [TaskType]&#xA; ,'REVIEW FILEBOUND CASE IMAGES' AS [TaskDescription]&#xA; ,NULL AS [StartDate]&#xA; ,NULL AS [DueDate]&#xA; ,NULL AS [AssignedToPartyID]&#xA; ,cd.CaseDocketID AS [CaseDocketID]&#xA; ,0 AS [Complete]&#xA; ,NULL AS [Waived]&#xA; ,NULL AS [CompleteDate]&#xA; ,NULL AS [Amount]&#xA; ,2 AS [CreateByUserID]&#xA; ,GETDATE() AS [CreateDate]&#xA; ,2 AS [ModifyByUserID]&#xA; ,GETDATE() AS [ModifyDate]&#xA; ,NULL AS [CompleteByUserID]&#xA;FROM tblCase c WITH(NOLOCK)&#xA;JOIN tblCaseDocket cd WITH(NOLOCK)&#xA; ON c.CaseID = cd.CaseID&#xA;&#xA;WHERE cd.SourceTableName IN ('Documents')&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{672827EF-1856-4319-8BA8-0D51916A4A7E}"
+      DTS:From="Package\01_CaseDocketInsertCivilTraffic"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\02_DocumentInsertCivilTraffic" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{4282F3F6-ED9D-4D9F-88F6-5A40B46F813D}"
+      DTS:From="Package\02_DocumentInsertCivilTraffic"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\03_InsertREVIEWCIVIL_TRAFFICTaskType" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{3C2A62CA-CEAD-4DC1-BDC3-5B737942F000}"
+      DTS:From="Package\03_InsertREVIEWCIVIL_TRAFFICTaskType"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\04_InsertREVIEWCIVIL_TRAFFIC_CaseTask" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
+      DTS:CreationName=""
+      DTS:DTSID="{2CA0209F-B472-4E6C-8589-9A2989587540}"
+      DTS:From="Package\04_InsertREVIEWCIVIL_TRAFFIC_CaseTask"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 3"
+      DTS:To="Package\05_CaseDocketInsertFB" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 4]"
+      DTS:CreationName=""
+      DTS:DTSID="{725A46E4-2130-4FC1-89BD-C0286FAB6727}"
+      DTS:From="Package\05_CaseDocketInsertFB"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 4"
+      DTS:To="Package\06_DocumentInsertFB" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 5]"
+      DTS:CreationName=""
+      DTS:DTSID="{86B1CE49-54E9-4E1A-AB41-AD3606B2A1CA}"
+      DTS:From="Package\06_DocumentInsertFB"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 5"
+      DTS:To="Package\07_InsertREVIEW_FileboundTaskType" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 6]"
+      DTS:CreationName=""
+      DTS:DTSID="{BD477DC9-ECD0-4A0E-A847-77ABEA5068D5}"
+      DTS:From="Package\07_InsertREVIEW_FileboundTaskType"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 6"
+      DTS:To="Package\08_InsertREVIEW_Filebound_CaseTask" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="284.8,41.6"
+          Id="Package\01_CaseDocketInsertCivilTraffic"
+          TopLeft="296.57143362201,28.988231639136" />
+        <NodeLayout
+          Size="284.8,41.6"
+          Id="Package\02_DocumentInsertCivilTraffic"
+          TopLeft="296.57143362201,70.588231639136" />
+        <NodeLayout
+          Size="284.8,41.6"
+          Id="Package\03_InsertREVIEWCIVIL_TRAFFICTaskType"
+          TopLeft="296.57143362201,112.188231639136" />
+        <NodeLayout
+          Size="284.8,41.6"
+          Id="Package\04_InsertREVIEWCIVIL_TRAFFIC_CaseTask"
+          TopLeft="296.57143362201,153.788231639136" />
+        <NodeLayout
+          Size="284.8,41.6"
+          Id="Package\05_CaseDocketInsertFB"
+          TopLeft="296.57143362201,195.388231639136" />
+        <NodeLayout
+          Size="284.8,41.6"
+          Id="Package\06_DocumentInsertFB"
+          TopLeft="296.57143362201,236.988231639136" />
+        <NodeLayout
+          Size="284.8,41.6"
+          Id="Package\07_InsertREVIEW_FileboundTaskType"
+          TopLeft="296.57143362201,278.588231639136" />
+        <NodeLayout
+          Size="284.8,41.6"
+          Id="Package\08_InsertREVIEW_Filebound_CaseTask"
+          TopLeft="296.57143362201,320.188231639136" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="296.57143362201,49.788231639136">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,36"
+              Start="0,0"
+              End="-7.5,36">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-18.5,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-18.5,0"
+                    Point2="-22.5,0"
+                    Point3="-22.5,4" />
+                  <mssgle:LineSegment
+                    End="-22.5,32" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-22.5,32"
+                    Point2="-22.5,36"
+                    Point3="-18.5,36" />
+                  <mssgle:LineSegment
+                    End="-7.5,36" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="296.57143362201,96.988231639136">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,30.4"
+              Start="0,0"
+              End="-7.5,30.4">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-18.5,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-18.5,0"
+                    Point2="-22.5,0"
+                    Point3="-22.5,4" />
+                  <mssgle:LineSegment
+                    End="-22.5,26.4" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-22.5,26.4"
+                    Point2="-22.5,30.4"
+                    Point3="-18.5,30.4" />
+                  <mssgle:LineSegment
+                    End="-7.5,30.4" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="296.57143362201,138.588231639136">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,30.4"
+              Start="0,0"
+              End="-7.5,30.4">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-18.5,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-18.5,0"
+                    Point2="-22.5,0"
+                    Point3="-22.5,4" />
+                  <mssgle:LineSegment
+                    End="-22.5,26.4" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-22.5,26.4"
+                    Point2="-22.5,30.4"
+                    Point3="-18.5,30.4" />
+                  <mssgle:LineSegment
+                    End="-7.5,30.4" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 3]"
+          TopLeft="296.57143362201,180.188231639136">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,30.4"
+              Start="0,0"
+              End="-7.5,30.4">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-18.5,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-18.5,0"
+                    Point2="-22.5,0"
+                    Point3="-22.5,4" />
+                  <mssgle:LineSegment
+                    End="-22.5,26.4" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-22.5,26.4"
+                    Point2="-22.5,30.4"
+                    Point3="-18.5,30.4" />
+                  <mssgle:LineSegment
+                    End="-7.5,30.4" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 4]"
+          TopLeft="296.57143362201,221.788231639136">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,30.3999999999999"
+              Start="0,0"
+              End="-7.5,30.3999999999999">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-18.5,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-18.5,0"
+                    Point2="-22.5,0"
+                    Point3="-22.5,4" />
+                  <mssgle:LineSegment
+                    End="-22.5,26.3999999999999" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-22.5,26.3999999999999"
+                    Point2="-22.5,30.3999999999999"
+                    Point3="-18.5,30.3999999999999" />
+                  <mssgle:LineSegment
+                    End="-7.5,30.3999999999999" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 5]"
+          TopLeft="296.57143362201,263.388231639136">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,30.4"
+              Start="0,0"
+              End="-7.5,30.4">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-18.5,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-18.5,0"
+                    Point2="-22.5,0"
+                    Point3="-22.5,4" />
+                  <mssgle:LineSegment
+                    End="-22.5,26.4" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-22.5,26.4"
+                    Point2="-22.5,30.4"
+                    Point3="-18.5,30.4" />
+                  <mssgle:LineSegment
+                    End="-7.5,30.4" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 6]"
+          TopLeft="296.57143362201,304.988231639136">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,36.0000000000001"
+              Start="0,0"
+              End="-7.5,36.0000000000001">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-18.5,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-18.5,0"
+                    Point2="-22.5,0"
+                    Point3="-22.5,4" />
+                  <mssgle:LineSegment
+                    End="-22.5,32.0000000000001" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-22.5,32.0000000000001"
+                    Point2="-22.5,36.0000000000001"
+                    Point3="-18.5,36.0000000000001" />
+                  <mssgle:LineSegment
+                    End="-7.5,36.0000000000001" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
